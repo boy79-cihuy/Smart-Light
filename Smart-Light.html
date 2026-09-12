@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Lighting Control</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #0b1422;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      padding: 20px;
+    }
+
+    /* PHONE */
+    .phone {
+      width: 390px;
+      min-height: 760px;
+      background: #101d2e;
+      border-radius: 40px;
+      padding: 25px 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 10px 5px 25px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .home-icon {
+      font-size: 38px;
+    }
+
+    .header h1 {
+      font-size: 25px;
+    }
+
+    .header p {
+      color: #91a1b8;
+      font-size: 14px;
+      margin-top: 3px;
+    }
+
+    .settings {
+      font-size: 25px;
+      color: #c8d2df;
+    }
+
+    /* ALL LIGHTS */
+    .all-lights {
+      background: #19283b;
+      border: 1px solid #293c54;
+      border-radius: 22px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .bulb {
+      font-size: 40px;
+    }
+
+    .all-text {
+      flex: 1;
+    }
+
+    .all-text h2 {
+      font-size: 18px;
+      margin-bottom: 5px;
+    }
+
+    .all-text p {
+      color: #91a1b8;
+      font-size: 14px;
+    }
+
+    /* ROOMS */
+    .rooms-title {
+      font-size: 22px;
+      margin-bottom: 15px;
+    }
+
+    .rooms {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .room {
+      background: #19283b;
+      border: 1px solid #293c54;
+      border-radius: 20px;
+      padding: 18px;
+      min-height: 190px;
+      transition: 0.2s;
+    }
+
+    .room:hover {
+      transform: translateY(-2px);
+    }
+
+    .room-icon {
+      font-size: 38px;
+      margin-bottom: 20px;
+    }
+
+    .room h3 {
+      font-size: 16px;
+      margin-bottom: 7px;
+    }
+
+    .status {
+      color: #91a1b8;
+      font-size: 13px;
+      margin-bottom: 15px;
+    }
+
+    /* SWITCH */
+    .switch {
+      position: relative;
+      width: 54px;
+      height: 30px;
+      display: inline-block;
+    }
+
+    .switch input {
+      display: none;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: #536278;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 22px;
+      height: 22px;
+      left: 4px;
+      top: 4px;
+      background: white;
+      border-radius: 50%;
+      transition: 0.3s;
+    }
+
+    .switch input:checked + .slider {
+      background: #ffd75a;
+    }
+
+    .switch input:checked + .slider::before {
+      transform: translateX(24px);
+    }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      display: flex;
+      justify-content: space-around;
+      border-top: 1px solid #293c54;
+      margin-top: 25px;
+      padding-top: 20px;
+    }
+
+    .nav-item {
+      text-align: center;
+      color: #8493a8;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .nav-item span {
+      display: block;
+      font-size: 22px;
+      margin-bottom: 5px;
+    }
+
+    .nav-item.active {
+      color: #ffd75a;
+    }
+
+    /* MOBILE */
+    @media (max-width: 450px) {
+      body {
+        padding: 0;
+      }
+
+      .phone {
+        width: 100%;
+        min-height: 100vh;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="phone">
+
+    <!-- HEADER -->
+    <div class="header">
+      <div class="header-left">
+        <div class="home-icon">⌂</div>
+
+        <div>
+          <h1>Smart Home</h1>
+          <p>Lighting Control</p>
+        </div>
+      </div>
+
+      <div class="settings">⚙</div>
+    </div>
+
+
+    <!-- ALL LIGHTS -->
+    <div class="all-lights">
+
+      <div class="bulb">💡</div>
+
+      <div class="all-text">
+        <h2>All Lights</h2>
+        <p id="lightCount">3 of 6 rooms on</p>
+      </div>
+
+      <label class="switch">
+        <input type="checkbox" id="allSwitch">
+        <span class="slider"></span>
+      </label>
+
+    </div>
+
+
+    <!-- ROOMS -->
+    <h2 class="rooms-title">Rooms</h2>
+
+    <div class="rooms">
+
+      <!-- LIVING ROOM -->
+      <div class="room">
+        <div class="room-icon">🛋️</div>
+        <h3>Living Room</h3>
+        <p class="status">On</p>
+
+        <label class="switch">
+          <input type="checkbox" class="roomSwitch" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+
+      <!-- BEDROOM -->
+      <div class="room">
+        <div class="room-icon">🛏️</div>
+        <h3>Bedroom</h3>
+        <p class="status">On</p>
+
+        <label class="switch">
+          <input type="checkbox" class="roomSwitch" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+
+      <!-- KITCHEN -->
+      <div class="room">
+        <div class="room-icon">🍴</div>
+        <h3>Kitchen</h3>
+        <p class="status">On</p>
+
+        <label class="switch">
+          <input type="checkbox" class="roomSwitch" checked>
+          <span class="slider"></span>
+        </label>
+      </div>
+
+
+      <!-- BATHROOM -->
+      <div class="room">
+        <div class="room-icon">🚿</div>
+        <h3>Bathroom</h3>
+        <p class="status">Off</p>
+
+        <label class="switch">
+          <input type="checkbox" class="roomSwitch">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+
+      <!-- HALLWAY -->
+      <div class="room">
+        <div class="room-icon">🚪</div>
+        <h3>Hallway</h3>
+        <p class="status">Off</p>
+
+        <label class="switch">
+          <input type="checkbox" class="roomSwitch">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+
+      <!-- OUTDOOR -->
+      <div class="room">
+        <div class="room-icon">🌳</div>
+        <h3>Outdoor</h3>
+        <p class="status">Off</p>
+
+        <label class="switch">
+          <input type="checkbox" class="roomSwitch">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+    </div>
+
+
+    <!-- BOTTOM NAV -->
+    <div class="bottom-nav">
+
+      <div class="nav-item active">
+        <span>⌂</span>
+        Home
+      </div>
+
+      <div class="nav-item">
+        <span>▦</span>
+        Scenes
+      </div>
+
+      <div class="nav-item">
+        <span>◷</span>
+        Schedule
+      </div>
+
+      <div class="nav-item">
+        <span>♙</span>
+        Profile
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    const roomSwitches = document.querySelectorAll(".roomSwitch");
+    const lightCount = document.getElementById("lightCount");
+    const allSwitch = document.getElementById("allSwitch");
+
+    // UPDATE STATUS
+    function updateLights() {
+
+      let total = roomSwitches.length;
+      let on = 0;
+
+      roomSwitches.forEach((switchEl) => {
+
+        const room = switchEl.closest(".room");
+        const status = room.querySelector(".status");
+
+        if (switchEl.checked) {
+          on++;
+          status.textContent = "On";
+        } else {
+          status.textContent = "Off";
+        }
+
+      });
+
+      lightCount.textContent = `${on} of ${total} rooms on`;
+
+      // Update ALL switch
+      allSwitch.checked = on === total;
+    }
+
+
+    // INDIVIDUAL SWITCH
+    roomSwitches.forEach((switchEl) => {
+
+      switchEl.addEventListener("change", updateLights);
+
+    });
+
+
+    // ALL LIGHTS SWITCH
+    allSwitch.addEventListener("change", function() {
+
+      roomSwitches.forEach((switchEl) => {
+
+        switchEl.checked = allSwitch.checked;
+
+      });
+
+      updateLights();
+
+    });
+
+
+    // INITIAL STATE
+    updateLights();
+
+  </script>
+
+</body>
+</html>
